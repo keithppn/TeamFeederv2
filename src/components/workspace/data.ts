@@ -1,5 +1,5 @@
 // 02 — Staff workspace data. RLS limits every select to the caller's rooms.
-import type { Room } from '@/lib/booking'
+import { fmtDay, parseKey, rangeLabel, type Room } from '@/lib/booking'
 import { supabase } from '@/lib/supabase'
 
 export type Status = 'pending' | 'approved' | 'declined'
@@ -66,6 +66,9 @@ export async function callRpc(fn: string, args: Record<string, unknown>, msgs: {
   }
   return 'Something went wrong. Please try again.'
 }
+
+export const whenOf = (b: Pick<Booking, 'day' | 'start_slot' | 'end_slot'>) =>
+  `${fmtDay(parseKey(b.day))} · ${rangeLabel(b.start_slot, b.end_slot)}`
 
 const pad = (n: number) => String(n).padStart(2, '0')
 export const hhmm = (iso: string) => { const d = new Date(iso); return `${pad(d.getHours())}:${pad(d.getMinutes())}` }
