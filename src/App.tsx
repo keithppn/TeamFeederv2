@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { Availability, weekOf } from '@/components/Availability'
 import { BookingDialog, type Preset } from '@/components/BookingDialog'
-import { Header } from '@/components/Header'
+import { Header, type View } from '@/components/Header'
 import { Hero } from '@/components/Hero'
 import { InquiryDialog } from '@/components/InquiryDialog'
 import { Rooms } from '@/components/Rooms'
@@ -26,6 +26,16 @@ export default function App() {
   const [trackerKey, setTrackerKey] = useState(0)
   const [version, setVersion] = useState(0) // bump to refetch grid slots
   const room = rooms.find((r) => r.id === selRoom) ?? rooms[0]
+  // 02: staff switch between the public page and the workspace with the header's Workspace tab.
+  const [viewState, setView] = useState<View>('public')
+  const view: View = profile ? viewState : 'public'
+
+  useEffect(() => {
+    // After switching views, land on the anchor the nav link set (or the top).
+    const el = view === 'public' && location.hash ? document.getElementById(location.hash.slice(1)) : null
+    if (el) el.scrollIntoView()
+    else window.scrollTo(0, 0)
+  }, [view])
 
   const onTracked = (t: Tracked | null) => {
     setTracked(t)
@@ -47,11 +57,15 @@ export default function App() {
     <div id="top" className="min-h-screen">
       <Header
         profile={profile}
+        view={view}
+        onView={setView}
         onSignIn={() => setDialog('signin')}
-        onSignOut={async () => { await signOut(); toast('Signed out.') }}
+        onSignOut={async () => { await signOut(); setView('public'); toast('Signed out.') }}
         onContact={() => setDialog('inquiry')}
       />
-      {profile && <Workspace key={profile.id} profile={profile} onChanged={() => setVersion((v) => v + 1)} />}
+      {profile && view === 'workspace' ? (
+        <Workspace key={profile.id} profile={profile} onChanged={() => setVersion((v) => v + 1)} />
+      ) : (
       <main>
         <Hero onBook={() => { setPreset(undefined); setDialog('booking') }} onTracked={onTracked} trackerKey={trackerKey} />
         <Rooms rooms={rooms} onSee={setSelRoom} />
@@ -62,11 +76,12 @@ export default function App() {
           version={version}
         />
       </main>
+      )}
       <BookingDialog open={dialog === 'booking'} onOpenChange={toggle('booking')} rooms={rooms}
         preset={preset} onBooked={() => setVersion((v) => v + 1)} />
       <InquiryDialog open={dialog === 'inquiry'} onOpenChange={toggle('inquiry')} rooms={rooms} />
       <SignInDialog open={dialog === 'signin'} onOpenChange={toggle('signin')} signIn={signIn}
-        onSignedIn={(p) => toast(`Signed in as ${p.name}.`)} />
+        onSignedIn={(p) => { setView('workspace'); toast(`Signed in as ${p.name}.`) }} />
       <Toaster />
     </div>
   )

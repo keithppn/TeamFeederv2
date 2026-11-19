@@ -76,7 +76,7 @@ export function Workspace({ profile, onChanged }: { profile: Profile; onChanged:
   })()
 
   return (
-    <section id="workspace" aria-label="Staff workspace" className="px-[5vw] pb-8 pt-2">
+    <section id="workspace" aria-label="Staff workspace" className="px-[5vw] pb-8 pt-6">
       <div className="mx-auto flex max-w-[1240px] flex-col gap-[22px] rounded-[26px] bg-white p-7 shadow-[0_10px_40px_rgba(27,47,94,.12)]">
         {body}
       </div>

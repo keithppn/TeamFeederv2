@@ -23,7 +23,7 @@ Not built yet: 06 How it works, 07 FAQ, 08 Contact, 09 Footer.
 | Section | File | Notes |
 |---|---|---|
 | 01 | `src/components/Header.tsx` | Contact opens the inquiry dialog (08 not built). Other nav anchors wait for their sections. |
-| 02 | `src/components/workspace/` | `Workspace.tsx` shell + one file per tab. Reads via RLS, writes via staff RPCs. |
+| 02 | `src/components/workspace/` | Opened from the **Workspace** tab in the header; replaces the public sections while active. `Workspace.tsx` shell + one file per tab. Reads via RLS, writes via staff RPCs. |
 | 03 | `src/components/Hero.tsx`, `Tracker.tsx` | **Book a Room** opens the booking dialog. Tracker calls `track_booking` and reports the result to the grid. |
 | 04 | `src/components/Rooms.tsx` | Cards for active rooms; **See availability** selects the room in the grid. |
 | 05 | `src/components/Availability.tsx` | Weekly grid from `room_slots`; open/pending slots open the dialog pre-filled. Shows the tracked booking. |
