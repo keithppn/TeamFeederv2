@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
-  durOptions, mondayOf, normalizeTrackCode, slotCell, slotLabel, validateBooking, type BookingForm, type Room, type Slot,
+  buildMailPreview, durOptions, mondayOf, normalizeTrackCode, slotCell, slotLabel, validateBooking, type BookingForm, type Room, type Slot,
 } from './booking'
 
 const room: Room = { id: 'r1', name: 'Huddle Room C', location: '', capacity: 4, equipment: [] }
@@ -70,5 +70,16 @@ describe('slotCell', () => {
   it('flags slots of the tracked booking', () => {
     expect(slotCell(slots, '2026-11-23', 4, today, slots[1])).toMatchObject({ mine: 'pending', text: 'Your request' })
     expect(slotCell(slots, '2026-11-23', 6, today, slots[1]).mine).toBeNull()
+  })
+})
+
+describe('buildMailPreview', () => {
+  const b = { name: 'Liza', email: 'liza@example.com', roomName: 'Boardroom A', day: '2026-11-23', start: 2, end: 4, tx: 'BK-9C4M7T1VZE' }
+  it('writes approved and declined emails', () => {
+    expect(buildMailPreview('approved', b).subject).toBe('Approved: your booking BK-9C4M7T1VZE')
+    const d = buildMailPreview('declined', { ...b, reason: 'Maintenance' })
+    expect(d.subject).toBe('Declined: your booking BK-9C4M7T1VZE')
+    expect(d.body).toContain('Reason: Maintenance')
+    expect(buildMailPreview('declined', b).body).toContain('Reason: not given')
   })
 })

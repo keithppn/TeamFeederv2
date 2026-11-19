@@ -97,11 +97,12 @@ export function validateBooking(f: BookingForm, room: Room | undefined, todayKey
 }
 
 export type MailPreview = { to: string; subject: string; body: string }
+export type MailKind = 'received' | 'unavailable' | 'approved' | 'declined'
 
 // Builds the email the system would send. Nothing is delivered (prototype behaviour).
 export function buildMailPreview(
-  kind: 'received' | 'unavailable',
-  b: { name: string; email: string; roomName: string; day: string; start: number; end: number; tx?: string },
+  kind: MailKind,
+  b: { name: string; email: string; roomName: string; day: string; start: number; end: number; tx?: string; reason?: string },
 ): MailPreview {
   const when = `${fmtDay(parseKey(b.day))}, ${rangeLabel(b.start, b.end)}`
   const hi = `Hi ${b.name},\n\n`
@@ -111,6 +112,18 @@ export function buildMailPreview(
       to: b.email,
       subject: `We received your booking request ${b.tx}`,
       body: `${hi}Your request for ${b.roomName} on ${when} is pending approval.\nTransaction number: ${b.tx}\nKeep it. Type it into the Track field on the home page to check your booking.${sig}`,
+    }
+  if (kind === 'approved')
+    return {
+      to: b.email,
+      subject: `Approved: your booking ${b.tx}`,
+      body: `${hi}Your booking for ${b.roomName} on ${when} is approved. The time is now reserved and shows as Booked on the availability grid.${sig}`,
+    }
+  if (kind === 'declined')
+    return {
+      to: b.email,
+      subject: `Declined: your booking ${b.tx}`,
+      body: `${hi}Your request for ${b.roomName} on ${when} was declined.\nReason: ${b.reason || 'not given'}\nThe time is open again for new requests.${sig}`,
     }
   return {
     to: b.email,
