@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { Availability, weekOf } from '@/components/Availability'
 import { BookingDialog, type Preset } from '@/components/BookingDialog'
+import { Contact } from '@/components/Contact'
 import { Faq } from '@/components/Faq'
 import { Header } from '@/components/Header'
 import { Hero } from '@/components/Hero'
@@ -49,7 +50,6 @@ export default function App() {
         profile={profile}
         onSignIn={() => setDialog('signin')}
         onSignOut={async () => { await signOut(); toast('Signed out.') }}
-        onContact={() => setDialog('inquiry')}
       />
       <main>
         <Hero onBook={() => { setPreset(undefined); setDialog('booking') }} onTracked={onTracked} trackerKey={trackerKey} />
@@ -62,6 +62,7 @@ export default function App() {
         />
         <HowItWorks />
         <Faq />
+        <Contact onInquiry={() => setDialog('inquiry')} />
       </main>
       <BookingDialog open={dialog === 'booking'} onOpenChange={toggle('booking')} rooms={rooms}
         preset={preset} onBooked={() => setVersion((v) => v + 1)} />

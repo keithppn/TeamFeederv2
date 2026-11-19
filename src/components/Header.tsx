@@ -6,8 +6,8 @@ import { cn } from '@/lib/utils'
 
 const navCls = 'border-b-[3px] border-transparent py-2.5 font-semibold text-foreground no-underline hover:border-accent'
 
-export function Header({ profile, onSignIn, onSignOut, onContact }: {
-  profile: Profile | null; onSignIn: () => void; onSignOut: () => void; onContact: () => void
+export function Header({ profile, onSignIn, onSignOut }: {
+  profile: Profile | null; onSignIn: () => void; onSignOut: () => void
 }) {
   return (
     <header className="flex flex-wrap items-center justify-between gap-x-8 gap-y-4 px-[5vw] py-5">
@@ -27,7 +27,7 @@ export function Header({ profile, onSignIn, onSignOut, onContact }: {
         <a className={navCls} href="#availability">Availability</a>
         <a className={navCls} href="#how">How it works</a>
         <a className={navCls} href="#faq">FAQ</a>
-        <a className={navCls} href="#contact" onClick={(e) => { e.preventDefault(); onContact() }}>Contact</a>
+        <a className={navCls} href="#contact">Contact</a>
       </nav>
       <div className="flex flex-wrap items-center gap-3">
         {profile ? (
