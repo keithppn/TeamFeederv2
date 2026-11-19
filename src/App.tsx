@@ -9,6 +9,7 @@ import { Rooms } from '@/components/Rooms'
 import { SignInDialog } from '@/components/SignInDialog'
 import type { Tracked } from '@/components/Tracker'
 import { Toaster } from '@/components/ui/sonner'
+import { Workspace } from '@/components/workspace/Workspace'
 import { useAuth } from '@/hooks/useAuth'
 import type { Room } from '@/lib/booking'
 import { supabase } from '@/lib/supabase'
@@ -35,9 +36,10 @@ export default function App() {
   }
 
   useEffect(() => {
-    supabase.from('rooms').select('id, name, location, capacity, equipment').order('name')
+    // active filter: staff can read inactive rooms too, but the public sections never show them.
+    supabase.from('rooms').select('id, name, location, capacity, equipment').eq('active', true).order('name')
       .then(({ data }) => setRooms((data as Room[] | null) ?? []))
-  }, [])
+  }, [version]) // reload after staff room edits
 
   const toggle = (name: NonNullable<typeof dialog>) => (open: boolean) => setDialog(open ? name : null)
 
@@ -49,6 +51,7 @@ export default function App() {
         onSignOut={async () => { await signOut(); toast('Signed out.') }}
         onContact={() => setDialog('inquiry')}
       />
+      {profile && <Workspace key={profile.id} profile={profile} onChanged={() => setVersion((v) => v + 1)} />}
       <main>
         <Hero onBook={() => { setPreset(undefined); setDialog('booking') }} onTracked={onTracked} trackerKey={trackerKey} />
         <Rooms rooms={rooms} onSee={setSelRoom} />
