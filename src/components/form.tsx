@@ -32,9 +32,9 @@ export function BrDialogContent({ title, description, children, className }: {
   title: string; description?: string; children: ReactNode; className?: string
 }) {
   return (
-    <DialogContent className={cn('max-h-[92vh] overflow-auto rounded-3xl bg-white p-7 sm:max-w-[540px]', className)}>
+    <DialogContent className={cn('max-h-[92dvh] overflow-auto rounded-3xl bg-white p-5 sm:max-h-[92vh] sm:p-7 sm:max-w-[540px]', className)}>
       <DialogHeader className="pr-8">
-        <DialogTitle className="text-[28px] font-extrabold leading-tight tracking-tight">{title}</DialogTitle>
+        <DialogTitle className="text-2xl font-extrabold leading-tight tracking-tight sm:text-[28px]">{title}</DialogTitle>
         {description && <DialogDescription className="text-base font-medium">{description}</DialogDescription>}
       </DialogHeader>
       {children}

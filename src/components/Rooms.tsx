@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils'
 
 export function Rooms({ rooms, onSee }: { rooms: Room[]; onSee: (roomId: string) => void }) {
   return (
-    <section id="rooms" className="px-[5vw] pt-14">
+    <section id="rooms" className="px-[5vw] pt-10 sm:pt-14">
       <div className="mx-auto flex max-w-[1240px] flex-col gap-7">
         <div className="flex max-w-[640px] flex-col gap-2.5">
           <h2 className="text-[clamp(30px,3.4vw,44px)] font-extrabold tracking-tight">Find the right room</h2>

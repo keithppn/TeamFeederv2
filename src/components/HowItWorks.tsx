@@ -7,7 +7,7 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section id="how" className="px-[5vw] pt-[72px]">
+    <section id="how" className="px-[5vw] pt-12 sm:pt-[72px]">
       <div className="mx-auto flex max-w-[1240px] flex-col gap-7">
         <h2 className="text-[clamp(30px,3.4vw,44px)] font-extrabold tracking-tight">How it works</h2>
         <div className="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-5">

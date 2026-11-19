@@ -60,8 +60,8 @@ export function Availability({ rooms, room, onSelRoom, week, onWeek, tracked, on
   const t = tracked && tone[tracked.status]
 
   return (
-    <section id="availability" className="px-[5vw] pt-[72px]">
-      <div className="mx-auto flex max-w-[1240px] flex-col gap-5 rounded-[22px] bg-card p-6">
+    <section id="availability" className="px-[5vw] pt-12 sm:pt-[72px]">
+      <div className="mx-auto flex max-w-[1240px] flex-col gap-5 rounded-[22px] bg-card p-4 sm:p-6">
         <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
           <div className="flex min-w-0 flex-col gap-2">
             <h2 className="text-[clamp(28px,3vw,40px)] font-extrabold tracking-tight">Room availability</h2>
@@ -69,11 +69,11 @@ export function Availability({ rooms, room, onSelRoom, week, onWeek, tracked, on
               Open hours: Monday to Friday, {slotLabel(0)} – {slotLabel(SLOTS)}, in 30-minute slots. Pick an open slot to start a request.
             </p>
           </div>
-          <div className="flex items-center gap-2.5">
+          <div className="flex w-full items-center gap-2.5 sm:w-auto">
             <button className={iconBtn} aria-label="Previous week" disabled={week <= 0} onClick={() => onWeek(week - 1)}>
               <ChevronLeftIcon className="size-5" strokeWidth={2.4} aria-hidden="true" />
             </button>
-            <span aria-live="polite" className="min-w-[190px] text-center font-bold">
+            <span aria-live="polite" className="min-w-0 flex-1 text-center font-bold sm:min-w-[190px] sm:flex-none">
               {wk(days[0])} – {wk(days[4])}, {days[4].getFullYear()}
             </span>
             <button className={iconBtn} aria-label="Next week" disabled={week >= MAX_WEEKS} onClick={() => onWeek(week + 1)}>
@@ -125,9 +125,9 @@ export function Availability({ rooms, room, onSelRoom, week, onWeek, tracked, on
             </ul>
             {room && (
               <div className="overflow-x-auto pb-1.5">
-                <div className="flex min-w-[640px] flex-col gap-1">
-                  <div className="grid grid-cols-[84px_repeat(5,minmax(96px,1fr))] gap-1">
-                    <span />
+                <div className="flex min-w-[460px] flex-col gap-1 sm:min-w-[640px]">
+                  <div className="grid grid-cols-[56px_repeat(5,minmax(76px,1fr))] sm:grid-cols-[84px_repeat(5,minmax(96px,1fr))] gap-1">
+                    <span className="sticky left-0 bg-card" />
                     {days.map((d) => (
                       <div key={dkey(d)} className="py-1.5 text-center font-extrabold">
                         {fmtDay(d).split(',')[0]}<br />
@@ -136,8 +136,8 @@ export function Availability({ rooms, room, onSelRoom, week, onWeek, tracked, on
                     ))}
                   </div>
                   {Array.from({ length: SLOTS }, (_, s) => (
-                    <div key={s} className="grid grid-cols-[84px_repeat(5,minmax(96px,1fr))] items-center gap-1">
-                      <span className="pr-2 text-right text-xs font-semibold text-muted-foreground">{slotLabel(s)}</span>
+                    <div key={s} className="grid grid-cols-[56px_repeat(5,minmax(76px,1fr))] sm:grid-cols-[84px_repeat(5,minmax(96px,1fr))] items-center gap-1">
+                      <span className="sticky left-0 z-10 bg-card pr-2 text-right text-xs font-semibold text-muted-foreground">{slotLabel(s)}</span>
                       {days.map((d) => {
                         const day = dkey(d)
                         const c = slotCell(slots, day, s, todayKey, mine)
