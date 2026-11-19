@@ -20,10 +20,10 @@ const faqs = [
 
 export function Faq() {
   return (
-    <section id="faq" className="px-[5vw] pt-[72px]">
+    <section id="faq" className="px-[5vw] pt-12 sm:pt-[72px]">
       <div className="mx-auto flex max-w-[900px] flex-col gap-5">
         <h2 className="text-[clamp(30px,3.4vw,44px)] font-extrabold tracking-tight">Questions, answered</h2>
-        <div className="rounded-[22px] bg-card px-6 py-2">
+        <div className="rounded-[22px] bg-card px-4 py-2 sm:px-6">
           {faqs.map((f) => (
             <details key={f.q} className="border-b-[1.5px] border-[#F0E6D2] last:border-b-0">
               <summary className="flex min-h-11 cursor-pointer items-center text-lg font-bold">{f.q}</summary>

@@ -86,7 +86,7 @@ export function Tracker({ onTracked }: { onTracked?: (t: Tracked | null) => void
   const msgColor = { idle: 'text-muted-foreground', ok: 'text-[#13692B]', pend: 'text-[#8A5300]', bad: 'text-destructive' }[tone]
 
   return (
-    <div id="track" className="flex max-w-[400px] flex-[1_1_300px] flex-col gap-2">
+    <div id="track" className="flex w-full flex-col gap-2 sm:max-w-[400px] sm:flex-[1_1_300px]">
       <label htmlFor="track-input" className="text-[15px] font-bold leading-[22px]">Track your booking: type the 10 characters after BK-</label>
       <div className="relative">
         <span aria-hidden="true" className="absolute inset-y-0 left-[26px] flex items-center text-base font-extrabold tracking-wider text-muted-foreground">BK-</span>
