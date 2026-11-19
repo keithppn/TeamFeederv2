@@ -1,9 +1,12 @@
 // 03 — Hero
 import { ArrowRightIcon, CalendarCheckIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Tracker } from '@/components/Tracker'
+import { Tracker, type Tracked } from '@/components/Tracker'
 
-export function Hero({ onBook }: { onBook: () => void }) {
+// trackerKey: changing it clears the tracker (used by the Clear button in 05 Availability).
+export function Hero({ onBook, onTracked, trackerKey }: {
+  onBook: () => void; onTracked?: (t: Tracked | null) => void; trackerKey?: number
+}) {
   return (
     <section aria-labelledby="hero-title" className="flex flex-wrap items-stretch overflow-hidden pl-[5vw]">
       <div className="flex max-w-[780px] flex-[1_1_520px] flex-col items-start justify-center gap-7 pb-[72px] pr-6 pt-12">
@@ -21,7 +24,7 @@ export function Hero({ onBook }: { onBook: () => void }) {
           <Button onClick={onBook} className="h-[60px] gap-2 rounded-full px-[34px] text-lg font-bold">
             Book a Room <ArrowRightIcon className="size-[22px]" strokeWidth={2.4} aria-hidden="true" />
           </Button>
-          <Tracker />
+          <Tracker key={trackerKey} onTracked={onTracked} />
         </div>
       </div>
       <div className="relative min-h-[440px] flex-[1.35_1_520px]">

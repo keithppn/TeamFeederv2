@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { durOptions, normalizeTrackCode, slotLabel, validateBooking, type BookingForm, type Room } from './booking'
+import {
+  durOptions, mondayOf, normalizeTrackCode, slotCell, slotLabel, validateBooking, type BookingForm, type Room, type Slot,
+} from './booking'
 
 const room: Room = { id: 'r1', name: 'Huddle Room C', location: '', capacity: 4, equipment: [] }
 const base: BookingForm = {
@@ -43,5 +45,30 @@ describe('labels', () => {
     expect(slotLabel(0)).toBe('8:00 AM')
     expect(slotLabel(18)).toBe('5:00 PM')
     expect(durOptions.map((o) => o.label).slice(0, 3)).toEqual(['30 min', '1 hour', '1 hr 30 min'])
+  })
+})
+
+describe('mondayOf', () => {
+  it('returns this Monday on weekdays and next Monday on weekends', () => {
+    expect(mondayOf(new Date(2026, 10, 19)).getDate()).toBe(16) // Thu -> Mon 16
+    expect(mondayOf(new Date(2026, 10, 21)).getDate()).toBe(23) // Sat -> Mon 23
+    expect(mondayOf(new Date(2026, 10, 22)).getDate()).toBe(23) // Sun -> Mon 23
+  })
+})
+
+describe('slotCell', () => {
+  const slots: Slot[] = [
+    { day: '2026-11-23', start_slot: 2, end_slot: 4, status: 'approved' },
+    { day: '2026-11-23', start_slot: 3, end_slot: 6, status: 'pending' },
+  ]
+  it('marks past, booked, pending and open slots', () => {
+    expect(slotCell(slots, '2026-11-18', 2, today, null)).toMatchObject({ kind: 'past', disabled: true })
+    expect(slotCell(slots, '2026-11-23', 3, today, null)).toMatchObject({ kind: 'booked', disabled: true })
+    expect(slotCell(slots, '2026-11-23', 5, today, null)).toMatchObject({ kind: 'pending', disabled: false })
+    expect(slotCell(slots, '2026-11-23', 6, today, null)).toMatchObject({ kind: 'open', text: 'Open' })
+  })
+  it('flags slots of the tracked booking', () => {
+    expect(slotCell(slots, '2026-11-23', 4, today, slots[1])).toMatchObject({ mine: 'pending', text: 'Your request' })
+    expect(slotCell(slots, '2026-11-23', 6, today, slots[1]).mine).toBeNull()
   })
 })

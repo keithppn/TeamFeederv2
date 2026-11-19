@@ -46,6 +46,17 @@ export const nextWeekday = (d: Date) => {
   return b
 }
 
+export const addDays = (d: Date, n: number) => {
+  const x = new Date(d.getFullYear(), d.getMonth(), d.getDate())
+  x.setDate(x.getDate() + n)
+  return x
+}
+// Monday of the week shown first; on weekends that is next week's Monday.
+export const mondayOf = (d: Date) => {
+  const b = nextWeekday(d)
+  return addDays(b, -((b.getDay() + 6) % 7))
+}
+
 export const startOptions = Array.from({ length: SLOTS }, (_, s) => ({ v: String(s), label: slotLabel(s) }))
 export const durOptions = Array.from({ length: 8 }, (_, i) => {
   const n = i + 1
@@ -106,4 +117,28 @@ export function buildMailPreview(
     subject: 'Your booking could not be completed',
     body: `${hi}Sorry, ${b.roomName} on ${when} is no longer available. No booking was made. Please choose another time.${sig}`,
   }
+}
+
+// 05 — Availability grid cells.
+export type Slot = { day: string; start_slot: number; end_slot: number; status: 'pending' | 'approved' }
+export type CellKind = 'past' | 'booked' | 'pending' | 'open'
+export type Cell = { kind: CellKind; mine: 'approved' | 'pending' | null; text: string; disabled: boolean; aria: string }
+
+// `tracked` is the tracked booking when it is in the same room, else null.
+export function slotCell(slots: Slot[], day: string, s: number, todayKey: string, tracked: Slot | null): Cell {
+  const at = (b: Slot) => b.day === day && b.start_slot <= s && s < b.end_slot
+  const hits = slots.filter(at)
+  const label = `${fmtDay(parseKey(day))}, ${slotLabel(s)}`
+  const mine = tracked && at(tracked) ? tracked.status : null
+  const mineText = mine === 'approved' ? 'Your booking' : mine ? 'Your request' : ''
+  if (day < todayKey)
+    return { kind: 'past', mine, text: mineText || '—', disabled: true, aria: `${label}: ${mine ? `${mineText.toLowerCase()}, past` : 'past'}` }
+  if (hits.some((b) => b.status === 'approved'))
+    return { kind: 'booked', mine, text: mineText || 'Booked', disabled: true, aria: `${label}: ${mine ? 'your tracked booking' : 'booked'}` }
+  if (hits.length)
+    return {
+      kind: 'pending', mine, text: mineText || 'Pending', disabled: false,
+      aria: `${label}: ${mine ? 'your tracked request, pending approval' : 'pending request, you can still request this time'}`,
+    }
+  return { kind: 'open', mine: null, text: 'Open', disabled: false, aria: `${label}: available, request this slot` }
 }
