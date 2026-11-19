@@ -20,8 +20,9 @@ export function Hero({ onBook, onTracked, trackerKey }: {
         <p className="max-w-[520px] text-xl font-medium leading-relaxed text-muted-foreground">
           Book conference rooms, manage your meetings, and boost productivity — all in one place.
         </p>
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-4">
-          <Button onClick={onBook} className="h-[60px] gap-2 rounded-full px-[34px] text-lg font-bold">
+        <div className="flex flex-wrap items-start gap-x-6 gap-y-4">
+          {/* mt = tracker label (22px) + gap (8px): lines the button up with the field, not the whole tracker */}
+          <Button onClick={onBook} className="mt-[30px] h-[60px] gap-2 rounded-full px-[34px] text-lg font-bold">
             Book a Room <ArrowRightIcon className="size-[22px]" strokeWidth={2.4} aria-hidden="true" />
           </Button>
           <Tracker key={trackerKey} onTracked={onTracked} />
