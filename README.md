@@ -2,15 +2,16 @@
 
 React + Vite + TypeScript + shadcn/ui + Supabase. Design follows the original single-file prototype.
 
-Built sections (from the section specs): **01 Header**, **03 Hero & tracker**, **10 Booking dialog**, **11 Inquiry dialog**, **12 Staff sign-in**, **04 Rooms**, **05 Availability grid**.
-Not built yet: 02 Staff workspace, 06 How it works, 07 FAQ, 08 Contact, 09 Footer.
+Built sections (from the section specs): **01 Header**, **03 Hero & tracker**, **10 Booking dialog**, **11 Inquiry dialog**, **12 Staff sign-in**, **02 Staff workspace**, **04 Rooms**, **05 Availability grid**.
+Not built yet: 06 How it works, 07 FAQ, 08 Contact, 09 Footer.
 
 ## Setup
 
 1. **Supabase**
    1. In the dashboard, Authentication → Add user, create these with password `demo1234` (auto-confirm):
       `super@bookroom.example`, `admin1@bookroom.example`, `admin2@bookroom.example`.
-   2. SQL editor: run the files in `supabase/migrations/` in order (`001_init.sql`, `002_availability.sql`), then `supabase/seed.sql`.
+   2. SQL editor: run the files in `supabase/migrations/` in order (`001_init.sql`, `002_availability.sql`, `003_staff_workspace.sql`), then `supabase/seed.sql`
+      (it also assigns the demo Admins to rooms).
 2. `cp .env.example .env` and fill in your project URL and anon key (Settings → API).
 3. `npm install`
 4. `npm run dev`
@@ -22,6 +23,7 @@ Not built yet: 02 Staff workspace, 06 How it works, 07 FAQ, 08 Contact, 09 Foote
 | Section | File | Notes |
 |---|---|---|
 | 01 | `src/components/Header.tsx` | Contact opens the inquiry dialog (08 not built). Other nav anchors wait for their sections. |
+| 02 | `src/components/workspace/` | Opened from the **Workspace** tab in the header; replaces the public sections while active. `Workspace.tsx` shell + one file per tab. Reads via RLS, writes via staff RPCs. |
 | 03 | `src/components/Hero.tsx`, `Tracker.tsx` | **Book a Room** opens the booking dialog. Tracker calls `track_booking` and reports the result to the grid. |
 | 04 | `src/components/Rooms.tsx` | Cards for active rooms; **See availability** selects the room in the grid. |
 | 05 | `src/components/Availability.tsx` | Weekly grid from `room_slots`; open/pending slots open the dialog pre-filled. Shows the tracked booking. |
@@ -37,6 +39,12 @@ Not built yet: 02 Staff workspace, 06 How it works, 07 FAQ, 08 Contact, 09 Foote
   `room_slots` (times and status only, for the grid).
 - `create_booking` re-checks dates, hours, capacity and approved-booking overlap on the server, and generates the `BK-` number.
 - `inquiries`: insert only for visitors.
+- Staff (`profiles` row) read through RLS, scoped by `can_act(room)`: Super Admins see every room, Admins only
+  rooms in `room_admins`. Unassigned inquiries are visible to Super Admins only; `audit_log` too.
+- Every staff change is a `security definer` RPC that re-checks role and room: `approve_booking` (locks the room,
+  rejects overlap with approved bookings), `decline_booking` (reason required), `staff_create_booking` (saved as
+  approved), `reply_inquiry`, and Super Admin only `add_room`, `update_room`, `set_room_admin`, `list_admins`.
+  Each one writes `audit_log`; approve/decline/create also write `mail_log` (the email log).
 
 ## Known limits
 
