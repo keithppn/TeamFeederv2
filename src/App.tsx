@@ -4,6 +4,7 @@ import { Availability, weekOf } from '@/components/Availability'
 import { BookingDialog, type Preset } from '@/components/BookingDialog'
 import { Header } from '@/components/Header'
 import { Hero } from '@/components/Hero'
+import { HowItWorks } from '@/components/HowItWorks'
 import { InquiryDialog } from '@/components/InquiryDialog'
 import { Rooms } from '@/components/Rooms'
 import { SignInDialog } from '@/components/SignInDialog'
@@ -58,6 +59,7 @@ export default function App() {
           onPick={(roomId, day, start) => { setPreset({ roomId, day, start }); setDialog('booking') }}
           version={version}
         />
+        <HowItWorks />
       </main>
       <BookingDialog open={dialog === 'booking'} onOpenChange={toggle('booking')} rooms={rooms}
         preset={preset} onBooked={() => setVersion((v) => v + 1)} />
