@@ -2,15 +2,15 @@
 
 React + Vite + TypeScript + shadcn/ui + Supabase. Design follows the original single-file prototype.
 
-Built sections (from the section specs): **01 Header**, **03 Hero & tracker**, **10 Booking dialog**, **11 Inquiry dialog**, **12 Staff sign-in**, **04 Rooms**.
-Not built yet: 02 Staff workspace, 05 Availability grid, 06 How it works, 07 FAQ, 08 Contact, 09 Footer.
+Built sections (from the section specs): **01 Header**, **03 Hero & tracker**, **10 Booking dialog**, **11 Inquiry dialog**, **12 Staff sign-in**, **04 Rooms**, **05 Availability grid**.
+Not built yet: 02 Staff workspace, 06 How it works, 07 FAQ, 08 Contact, 09 Footer.
 
 ## Setup
 
 1. **Supabase**
    1. In the dashboard, Authentication → Add user, create these with password `demo1234` (auto-confirm):
       `super@bookroom.example`, `admin1@bookroom.example`, `admin2@bookroom.example`.
-   2. SQL editor: run `supabase/migrations/001_init.sql`, then `supabase/seed.sql`.
+   2. SQL editor: run the files in `supabase/migrations/` in order (`001_init.sql`, `002_availability.sql`), then `supabase/seed.sql`.
 2. `cp .env.example .env` and fill in your project URL and anon key (Settings → API).
 3. `npm install`
 4. `npm run dev`
@@ -22,8 +22,9 @@ Not built yet: 02 Staff workspace, 05 Availability grid, 06 How it works, 07 FAQ
 | Section | File | Notes |
 |---|---|---|
 | 01 | `src/components/Header.tsx` | Contact opens the inquiry dialog (08 not built). Other nav anchors wait for their sections. |
-| 03 | `src/components/Hero.tsx`, `Tracker.tsx` | **Book a Room** opens the booking dialog (no grid yet). Tracker calls `track_booking`. |
-| 04 | `src/components/Rooms.tsx` | Cards for active rooms; **See availability** jumps to `#availability`. |
+| 03 | `src/components/Hero.tsx`, `Tracker.tsx` | **Book a Room** opens the booking dialog. Tracker calls `track_booking` and reports the result to the grid. |
+| 04 | `src/components/Rooms.tsx` | Cards for active rooms; **See availability** selects the room in the grid. |
+| 05 | `src/components/Availability.tsx` | Weekly grid from `room_slots`; open/pending slots open the dialog pre-filled. Shows the tracked booking. |
 | 10 | `src/components/BookingDialog.tsx` | Calls `create_booking`; shows phone, purpose, attendees too. Email is a preview only. |
 | 11 | `src/components/InquiryDialog.tsx` | Inserts into `inquiries`. |
 | 12 | `src/components/SignInDialog.tsx`, `src/hooks/useAuth.ts` | Supabase Auth; only users with a `profiles` row can sign in. |
@@ -32,7 +33,8 @@ Not built yet: 02 Staff workspace, 05 Availability grid, 06 How it works, 07 FAQ
 ## Security model
 
 - Visitors cannot read `bookings`. They go through `security definer` RPCs:
-  `create_booking`, `track_booking` (no name/email returned), `pending_overlap`.
+  `create_booking`, `track_booking` (no name/email returned), `pending_overlap`,
+  `room_slots` (times and status only, for the grid).
 - `create_booking` re-checks dates, hours, capacity and approved-booking overlap on the server, and generates the `BK-` number.
 - `inquiries`: insert only for visitors.
 

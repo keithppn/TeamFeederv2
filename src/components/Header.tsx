@@ -21,7 +21,7 @@ export function Header({ profile, onSignIn, onSignOut, onContact }: {
         </svg>
         <span className="text-[32px] font-extrabold tracking-tight">Book<span className="text-accent">Room</span></span>
       </a>
-      {/* Rooms, Availability, How it works and FAQ sections are not built yet; their anchors land at the top. */}
+      {/* How it works and FAQ sections are not built yet; their anchors land at the top. */}
       <nav aria-label="Primary" className="flex flex-wrap gap-x-9 gap-y-1 text-[17px]">
         <a className={cn(navCls, 'border-accent')} href="#top">Home</a>
         <a className={navCls} href="#rooms">Rooms</a>
