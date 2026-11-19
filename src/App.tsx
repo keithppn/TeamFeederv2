@@ -4,6 +4,7 @@ import { Availability, weekOf } from '@/components/Availability'
 import { BookingDialog, type Preset } from '@/components/BookingDialog'
 import { Contact } from '@/components/Contact'
 import { Faq } from '@/components/Faq'
+import { Footer } from '@/components/Footer'
 import { Header } from '@/components/Header'
 import { Hero } from '@/components/Hero'
 import { HowItWorks } from '@/components/HowItWorks'
@@ -64,6 +65,7 @@ export default function App() {
         <Faq />
         <Contact onInquiry={() => setDialog('inquiry')} />
       </main>
+      <Footer onSignIn={profile ? undefined : () => setDialog('signin')} />
       <BookingDialog open={dialog === 'booking'} onOpenChange={toggle('booking')} rooms={rooms}
         preset={preset} onBooked={() => setVersion((v) => v + 1)} />
       <InquiryDialog open={dialog === 'inquiry'} onOpenChange={toggle('inquiry')} rooms={rooms} />
