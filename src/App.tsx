@@ -2,8 +2,13 @@ import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { Availability, weekOf } from '@/components/Availability'
 import { BookingDialog, type Preset } from '@/components/BookingDialog'
+import { Contact } from '@/components/Contact'
+import { Faq } from '@/components/Faq'
+import { Footer } from '@/components/Footer'
+import { Header } from '@/components/Header'
 import { Header, type View } from '@/components/Header'
 import { Hero } from '@/components/Hero'
+import { HowItWorks } from '@/components/HowItWorks'
 import { InquiryDialog } from '@/components/InquiryDialog'
 import { Rooms } from '@/components/Rooms'
 import { SignInDialog } from '@/components/SignInDialog'
@@ -60,6 +65,7 @@ export default function App() {
         view={view}
         onView={setView}
         onSignIn={() => setDialog('signin')}
+        onSignOut={async () => { await signOut(); toast('Signed out.') }}
         onSignOut={async () => { await signOut(); setView('public'); toast('Signed out.') }}
         onContact={() => setDialog('inquiry')}
       />
@@ -75,7 +81,11 @@ export default function App() {
           onPick={(roomId, day, start) => { setPreset({ roomId, day, start }); setDialog('booking') }}
           version={version}
         />
+        <HowItWorks />
+        <Faq />
+        <Contact onInquiry={() => setDialog('inquiry')} />
       </main>
+      <Footer onSignIn={profile ? undefined : () => setDialog('signin')} />
       )}
       <BookingDialog open={dialog === 'booking'} onOpenChange={toggle('booking')} rooms={rooms}
         preset={preset} onBooked={() => setVersion((v) => v + 1)} />

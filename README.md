@@ -22,11 +22,16 @@ Not built yet: 06 How it works, 07 FAQ, 08 Contact, 09 Footer.
 
 | Section | File | Notes |
 |---|---|---|
+| 01 | `src/components/Header.tsx` | Nav links are plain anchors to sections 04 to 08. |
 | 01 | `src/components/Header.tsx` | Contact opens the inquiry dialog (08 not built). Other nav anchors wait for their sections. |
 | 02 | `src/components/workspace/` | Opened from the **Workspace** tab in the header; replaces the public sections while active. `Workspace.tsx` shell + one file per tab. Reads via RLS, writes via staff RPCs. |
 | 03 | `src/components/Hero.tsx`, `Tracker.tsx` | **Book a Room** opens the booking dialog. Tracker calls `track_booking` and reports the result to the grid. |
 | 04 | `src/components/Rooms.tsx` | Cards for active rooms; **See availability** selects the room in the grid. |
 | 05 | `src/components/Availability.tsx` | Weekly grid from `room_slots`; open/pending slots open the dialog pre-filled. Shows the tracked booking. |
+| 06 | `src/components/HowItWorks.tsx` | Static three-step explainer. Keep wording in line with 03 and 10. |
+| 07 | `src/components/Faq.tsx` | Static accordion on native `<details>`. Answers describe rules in 03, 05, 10, 11; update together. |
+| 08 | `src/components/Contact.tsx` | **Send an inquiry** opens the inquiry dialog (11, form resets on open). |
+| 09 | `src/components/Footer.tsx` | **Track booking** jumps to the tracker (`#track`). **Staff sign in** shows only when signed out. |
 | 10 | `src/components/BookingDialog.tsx` | Calls `create_booking`; shows phone, purpose, attendees too. Email is a preview only. |
 | 11 | `src/components/InquiryDialog.tsx` | Inserts into `inquiries`. |
 | 12 | `src/components/SignInDialog.tsx`, `src/hooks/useAuth.ts` | Supabase Auth; only users with a `profiles` row can sign in. |

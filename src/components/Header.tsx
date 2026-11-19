@@ -6,6 +6,8 @@ import { cn } from '@/lib/utils'
 
 const navCls = 'border-b-[3px] border-transparent py-2.5 font-semibold text-foreground no-underline hover:border-accent'
 
+export function Header({ profile, onSignIn, onSignOut }: {
+  profile: Profile | null; onSignIn: () => void; onSignOut: () => void
 export type View = 'public' | 'workspace'
 
 export function Header({ profile, view, onView, onSignIn, onSignOut, onContact }: {
@@ -29,8 +31,13 @@ export function Header({ profile, view, onView, onSignIn, onSignOut, onContact }
         </svg>
         <span className="text-[32px] font-extrabold tracking-tight">Book<span className="text-accent">Room</span></span>
       </a>
-      {/* How it works and FAQ sections are not built yet; their anchors land at the top. */}
       <nav aria-label="Primary" className="flex flex-wrap gap-x-9 gap-y-1 text-[17px]">
+        <a className={cn(navCls, 'border-accent')} href="#top">Home</a>
+        <a className={navCls} href="#rooms">Rooms</a>
+        <a className={navCls} href="#availability">Availability</a>
+        <a className={navCls} href="#how">How it works</a>
+        <a className={navCls} href="#faq">FAQ</a>
+        <a className={navCls} href="#contact">Contact</a>
         {link('#top', 'Home', view === 'public')}
         {link('#rooms', 'Rooms')}
         {link('#availability', 'Availability')}
