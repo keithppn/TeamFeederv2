@@ -15,7 +15,7 @@ export type Inquiry = {
 }
 export type MailRow = {
   id: string; kind: 'received' | 'approved' | 'declined'; booking_id: string | null; room_id: string
-  to_email: string; tx: string; reason: string; created_at: string
+  to_email: string; tx: string; reason: string; created_at: string; sent_at: string | null; error: string
 }
 export type AuditRow = { id: string; actor_name: string; text: string; created_at: string }
 export type Admin = { id: string; name: string; email: string }
@@ -37,7 +37,7 @@ export async function loadWorkspace(isSuper: boolean): Promise<WsData> {
       .order('created_at', { ascending: false }),
     supabase.from('inquiries').select('id, name, email, room_id, tx, message, status, response, created_at')
       .order('created_at', { ascending: false }),
-    supabase.from('mail_log').select('id, kind, booking_id, room_id, to_email, tx, reason, created_at')
+    supabase.from('mail_log').select('id, kind, booking_id, room_id, to_email, tx, reason, created_at, sent_at, error')
       .order('created_at', { ascending: false }).limit(50),
     isSuper ? supabase.from('audit_log').select('id, actor_name, text, created_at').order('created_at', { ascending: false }).limit(8) : none,
     isSuper ? supabase.rpc('list_admins') : none,
@@ -72,6 +72,13 @@ export async function rpcData<T>(fn: string, args: Record<string, unknown>, msgs
 // Same, when only the error matters. Returns null on success.
 export const callRpc = async (fn: string, args: Record<string, unknown>, msgs: Msgs = {}) =>
   (await rpcData(fn, args, msgs))[1]
+
+// Emails the Client the latest unsent message for a booking. Returns null on success, else a message.
+export async function sendBookingEmail(bookingId: string): Promise<string | null> {
+  const { data, error } = await supabase.functions.invoke('send-booking-email', { body: { booking_id: bookingId } })
+  if (error) return 'Email service unavailable.'
+  return data?.sent ? null : (data?.error ?? 'Email not sent.')
+}
 
 export const whenOf = (b: Pick<Booking, 'day' | 'start_slot' | 'end_slot'>) =>
   `${fmtDay(parseKey(b.day))} · ${rangeLabel(b.start_slot, b.end_slot)}`
