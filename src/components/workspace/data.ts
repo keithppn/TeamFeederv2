@@ -53,19 +53,25 @@ export async function loadWorkspace(isSuper: boolean): Promise<WsData> {
   }
 }
 
-// Calls a staff RPC. Returns null on success, or a message for the user.
-export async function callRpc(fn: string, args: Record<string, unknown>, msgs: { unavailable?: string; forbidden?: string } = {}) {
-  const { error } = await supabase.rpc(fn, args)
-  if (!error) return null
+type Msgs = { unavailable?: string; forbidden?: string }
+
+// Calls a staff RPC. Returns [data, null] on success, or [null, a message for the user].
+export async function rpcData<T>(fn: string, args: Record<string, unknown>, msgs: Msgs = {}): Promise<[T | null, string | null]> {
+  const { data, error } = await supabase.rpc(fn, args)
+  if (!error) return [data as T, null]
   const m = error.message
-  if (m.includes('unavailable')) return msgs.unavailable ?? 'That time overlaps an approved booking.'
-  if (m.includes('forbidden')) return msgs.forbidden ?? "You don't have access to that room."
+  if (m.includes('unavailable')) return [null, msgs.unavailable ?? 'That time overlaps an approved booking.']
+  if (m.includes('forbidden')) return [null, msgs.forbidden ?? "You don't have access to that room."]
   if (m.startsWith('invalid: ')) {
     const t = m.slice('invalid: '.length)
-    return t.charAt(0).toUpperCase() + t.slice(1) + '.'
+    return [null, t.charAt(0).toUpperCase() + t.slice(1) + '.']
   }
-  return 'Something went wrong. Please try again.'
+  return [null, 'Something went wrong. Please try again.']
 }
+
+// Same, when only the error matters. Returns null on success.
+export const callRpc = async (fn: string, args: Record<string, unknown>, msgs: Msgs = {}) =>
+  (await rpcData(fn, args, msgs))[1]
 
 export const whenOf = (b: Pick<Booking, 'day' | 'start_slot' | 'end_slot'>) =>
   `${fmtDay(parseKey(b.day))} · ${rangeLabel(b.start_slot, b.end_slot)}`
