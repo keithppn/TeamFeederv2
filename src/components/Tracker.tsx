@@ -107,9 +107,6 @@ export function Tracker({ onTracked }: { onTracked?: (t: Tracked | null) => void
       </div>
       <p id="track-msg" role="status" aria-live="polite" className={cn('pl-1.5 text-[17px] font-extrabold empty:hidden', msgColor)}>{msg}</p>
       {detail && <p className="pl-1.5 text-sm font-semibold text-muted-foreground">{detail}</p>}
-      <p className="pl-1.5 text-[13px] font-medium text-muted-foreground">
-        Prototype codes to try: 7F3K9Q2M4X (booked), 9C4M7T1VZE (pending), 8T1B4F7HSC (declined).
-      </p>
     </div>
   )
 }
