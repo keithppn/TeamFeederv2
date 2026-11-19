@@ -5,18 +5,21 @@ import { fmtDay, normalizeTrackCode, parseKey, rangeLabel } from '@/lib/booking'
 import { supabase } from '@/lib/supabase'
 import { cn } from '@/lib/utils'
 
-type Tracked = {
+type Row = {
   status: 'pending' | 'approved' | 'declined'
-  room_name: string; day: string; start_slot: number; end_slot: number; reason: string
+  room_id: string; room_name: string; day: string; start_slot: number; end_slot: number
+  dept: string; purpose: string; reason: string
 }
+export type Tracked = Row & { tx: string }
 
 const MAX_MISSES = 5
 
-export function Tracker() {
+// onTracked reports the found booking (or null) so 05 Availability can show it.
+export function Tracker({ onTracked }: { onTracked?: (t: Tracked | null) => void }) {
   const [code, setCode] = useState('')
   const [misses, setMisses] = useState<string[]>([])
   const [nudge, setNudge] = useState(false)
-  const [found, setFound] = useState<Tracked | null | undefined>(undefined) // undefined = not looked up
+  const [found, setFound] = useState<Row | null | undefined>(undefined) // undefined = not looked up
   const latest = useRef('')
   const lockTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -29,12 +32,14 @@ export function Tracker() {
     setCode(next)
     setNudge(false)
     setFound(undefined)
+    onTracked?.(null)
     latest.current = next
     if (next.length !== 10 || locked) return
     const { data } = await supabase.rpc('track_booking', { p_tx: `BK-${next}` })
     if (latest.current !== next) return // a newer keystroke won
-    const row = (data as Tracked[] | null)?.[0] ?? null
+    const row = (data as Row[] | null)?.[0] ?? null
     setFound(row)
+    onTracked?.(row && { ...row, tx: `BK-${next}` })
     if (!row) {
       // shortcut: lockout is client-side only (a reload resets it); a real limit needs an edge function or DB rate limit.
       setMisses((m) => {
