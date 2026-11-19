@@ -42,3 +42,17 @@ join (values
   ('jumarebejenia@gmail.com', 'Jumare Bejenia', 'admin')
 ) as p(email, name, role) on u.email = p.email
 on conflict (id) do update set name = excluded.name, role = excluded.role;
+
+-- Room assignments for the Admins above (needs 003_staff_workspace.sql), like the prototype:
+-- first Admin -> Boardroom A and Meeting Room B, second Admin -> Meeting Room B and Huddle Room C.
+insert into public.room_admins (user_id, room_id)
+select u.id, r.id
+from auth.users u
+join (values
+  ('reymondxtrm@gmail.com', 'Boardroom A'),
+  ('reymondxtrm@gmail.com', 'Meeting Room B'),
+  ('jumarebejenia@gmail.com', 'Meeting Room B'),
+  ('jumarebejenia@gmail.com', 'Huddle Room C')
+) as a(email, room) on u.email = a.email
+join public.rooms r on r.name = a.room
+on conflict do nothing;

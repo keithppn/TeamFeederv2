@@ -8,7 +8,17 @@ const navCls = 'border-b-[3px] border-transparent py-2.5 font-semibold text-fore
 
 export function Header({ profile, onSignIn, onSignOut }: {
   profile: Profile | null; onSignIn: () => void; onSignOut: () => void
+export type View = 'public' | 'workspace'
+
+export function Header({ profile, view, onView, onSignIn, onSignOut, onContact }: {
+  profile: Profile | null; view: View; onView: (v: View) => void
+  onSignIn: () => void; onSignOut: () => void; onContact: () => void
 }) {
+  // Public anchors switch back to the public page; the href still sets the hash App scrolls to.
+  const link = (href: string, label: string, active = false) => (
+    <a className={cn(navCls, active && 'border-accent')} href={href} aria-current={active ? 'page' : undefined}
+      onClick={() => onView('public')}>{label}</a>
+  )
   return (
     <header className="flex flex-wrap items-center justify-between gap-x-8 gap-y-4 px-[5vw] py-5">
       <a href="#top" aria-label="BookRoom home" className="inline-flex items-center gap-3 text-foreground no-underline">
@@ -28,6 +38,18 @@ export function Header({ profile, onSignIn, onSignOut }: {
         <a className={navCls} href="#how">How it works</a>
         <a className={navCls} href="#faq">FAQ</a>
         <a className={navCls} href="#contact">Contact</a>
+        {link('#top', 'Home', view === 'public')}
+        {link('#rooms', 'Rooms')}
+        {link('#availability', 'Availability')}
+        {link('#how', 'How it works')}
+        {link('#faq', 'FAQ')}
+        <a className={navCls} href="#contact" onClick={(e) => { e.preventDefault(); onContact() }}>Contact</a>
+        {profile && (
+          <button type="button" className={cn(navCls, 'cursor-pointer', view === 'workspace' && 'border-accent')}
+            aria-current={view === 'workspace' ? 'page' : undefined} onClick={() => onView('workspace')}>
+            Workspace
+          </button>
+        )}
       </nav>
       <div className="flex flex-wrap items-center gap-3">
         {profile ? (
