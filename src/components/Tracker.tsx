@@ -87,7 +87,7 @@ export function Tracker({ onTracked }: { onTracked?: (t: Tracked | null) => void
 
   return (
     <div id="track" className="flex max-w-[400px] flex-[1_1_300px] flex-col gap-2">
-      <label htmlFor="track-input" className="text-[15px] font-bold">Track your booking: type the 10 characters after BK-</label>
+      <label htmlFor="track-input" className="text-[15px] font-bold leading-[22px]">Track your booking: type the 10 characters after BK-</label>
       <div className="relative">
         <span aria-hidden="true" className="absolute inset-y-0 left-[26px] flex items-center text-base font-extrabold tracking-wider text-muted-foreground">BK-</span>
         <input
