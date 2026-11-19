@@ -5,7 +5,6 @@ import { BookingDialog, type Preset } from '@/components/BookingDialog'
 import { Contact } from '@/components/Contact'
 import { Faq } from '@/components/Faq'
 import { Footer } from '@/components/Footer'
-import { Header } from '@/components/Header'
 import { Header, type View } from '@/components/Header'
 import { Hero } from '@/components/Hero'
 import { HowItWorks } from '@/components/HowItWorks'
@@ -65,27 +64,27 @@ export default function App() {
         view={view}
         onView={setView}
         onSignIn={() => setDialog('signin')}
-        onSignOut={async () => { await signOut(); toast('Signed out.') }}
         onSignOut={async () => { await signOut(); setView('public'); toast('Signed out.') }}
-        onContact={() => setDialog('inquiry')}
       />
       {profile && view === 'workspace' ? (
         <Workspace key={profile.id} profile={profile} onChanged={() => setVersion((v) => v + 1)} />
       ) : (
-      <main>
-        <Hero onBook={() => { setPreset(undefined); setDialog('booking') }} onTracked={onTracked} trackerKey={trackerKey} />
-        <Rooms rooms={rooms} onSee={setSelRoom} />
-        <Availability
-          rooms={rooms} room={room} onSelRoom={setSelRoom} week={week} onWeek={setWeek}
-          tracked={tracked} onClearTracked={() => { setTracked(null); setTrackerKey((k) => k + 1) }}
-          onPick={(roomId, day, start) => { setPreset({ roomId, day, start }); setDialog('booking') }}
-          version={version}
-        />
-        <HowItWorks />
-        <Faq />
-        <Contact onInquiry={() => setDialog('inquiry')} />
-      </main>
-      <Footer onSignIn={profile ? undefined : () => setDialog('signin')} />
+        <>
+          <main>
+            <Hero onBook={() => { setPreset(undefined); setDialog('booking') }} onTracked={onTracked} trackerKey={trackerKey} />
+            <Rooms rooms={rooms} onSee={setSelRoom} />
+            <Availability
+              rooms={rooms} room={room} onSelRoom={setSelRoom} week={week} onWeek={setWeek}
+              tracked={tracked} onClearTracked={() => { setTracked(null); setTrackerKey((k) => k + 1) }}
+              onPick={(roomId, day, start) => { setPreset({ roomId, day, start }); setDialog('booking') }}
+              version={version}
+            />
+            <HowItWorks />
+            <Faq />
+            <Contact onInquiry={() => setDialog('inquiry')} />
+          </main>
+          <Footer onSignIn={profile ? undefined : () => setDialog('signin')} />
+        </>
       )}
       <BookingDialog open={dialog === 'booking'} onOpenChange={toggle('booking')} rooms={rooms}
         preset={preset} onBooked={() => setVersion((v) => v + 1)} />

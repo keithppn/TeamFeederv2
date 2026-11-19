@@ -6,13 +6,11 @@ import { cn } from '@/lib/utils'
 
 const navCls = 'border-b-[3px] border-transparent py-2.5 font-semibold text-foreground no-underline hover:border-accent'
 
-export function Header({ profile, onSignIn, onSignOut }: {
-  profile: Profile | null; onSignIn: () => void; onSignOut: () => void
 export type View = 'public' | 'workspace'
 
-export function Header({ profile, view, onView, onSignIn, onSignOut, onContact }: {
+export function Header({ profile, view, onView, onSignIn, onSignOut }: {
   profile: Profile | null; view: View; onView: (v: View) => void
-  onSignIn: () => void; onSignOut: () => void; onContact: () => void
+  onSignIn: () => void; onSignOut: () => void
 }) {
   // Public anchors switch back to the public page; the href still sets the hash App scrolls to.
   const link = (href: string, label: string, active = false) => (
@@ -32,18 +30,12 @@ export function Header({ profile, view, onView, onSignIn, onSignOut, onContact }
         <span className="text-[32px] font-extrabold tracking-tight">Book<span className="text-accent">Room</span></span>
       </a>
       <nav aria-label="Primary" className="flex flex-wrap gap-x-9 gap-y-1 text-[17px]">
-        <a className={cn(navCls, 'border-accent')} href="#top">Home</a>
-        <a className={navCls} href="#rooms">Rooms</a>
-        <a className={navCls} href="#availability">Availability</a>
-        <a className={navCls} href="#how">How it works</a>
-        <a className={navCls} href="#faq">FAQ</a>
-        <a className={navCls} href="#contact">Contact</a>
         {link('#top', 'Home', view === 'public')}
         {link('#rooms', 'Rooms')}
         {link('#availability', 'Availability')}
         {link('#how', 'How it works')}
         {link('#faq', 'FAQ')}
-        <a className={navCls} href="#contact" onClick={(e) => { e.preventDefault(); onContact() }}>Contact</a>
+        {link('#contact', 'Contact')}
         {profile && (
           <button type="button" className={cn(navCls, 'cursor-pointer', view === 'workspace' && 'border-accent')}
             aria-current={view === 'workspace' ? 'page' : undefined} onClick={() => onView('workspace')}>
