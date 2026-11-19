@@ -4,6 +4,7 @@ import { BookingDialog } from '@/components/BookingDialog'
 import { Header } from '@/components/Header'
 import { Hero } from '@/components/Hero'
 import { InquiryDialog } from '@/components/InquiryDialog'
+import { Rooms } from '@/components/Rooms'
 import { SignInDialog } from '@/components/SignInDialog'
 import { Toaster } from '@/components/ui/sonner'
 import { useAuth } from '@/hooks/useAuth'
@@ -32,6 +33,8 @@ export default function App() {
       />
       <main>
         <Hero onBook={() => setDialog('booking')} />
+        {/* 05 Availability wires onSee to its room selection. */}
+        <Rooms rooms={rooms} onSee={() => {}} />
       </main>
       <BookingDialog open={dialog === 'booking'} onOpenChange={toggle('booking')} rooms={rooms} />
       <InquiryDialog open={dialog === 'inquiry'} onOpenChange={toggle('inquiry')} rooms={rooms} />
