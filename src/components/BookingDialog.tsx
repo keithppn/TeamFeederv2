@@ -15,13 +15,19 @@ import { cn } from '@/lib/utils'
 type Errors = ReturnType<typeof validateBooking> & { conflict?: string; form?: string }
 type Conf = { tx: string; email: string; summary: string }
 
-const blank = (roomId: string): BookingForm => ({
-  roomId, day: dkey(nextWeekday(new Date())), start: '4', dur: '2', // 10:00, 1 hour
+export type Preset = { roomId: string; day: string; start: number }
+
+const blank = (roomId: string, p?: Preset): BookingForm => ({
+  roomId: p?.roomId ?? roomId,
+  day: p?.day ?? dkey(nextWeekday(new Date())),
+  start: String(p?.start ?? 4), // default 10:00, 1 hour
+  dur: String(p ? Math.max(1, Math.min(2, SLOTS - p.start)) : 2),
   name: '', dept: '', email: '', phone: '', purpose: '', attendees: '',
 })
 
-export function BookingDialog({ open, onOpenChange, rooms }: {
-  open: boolean; onOpenChange: (open: boolean) => void; rooms: Room[]
+// preset: room/day/slot picked in the 05 Availability grid. onBooked: lets the grid refresh.
+export function BookingDialog({ open, onOpenChange, rooms, preset, onBooked }: {
+  open: boolean; onOpenChange: (open: boolean) => void; rooms: Room[]; preset?: Preset; onBooked?: () => void
 }) {
   const [f, setF] = useState<BookingForm>(() => blank(''))
   const [err, setErr] = useState<Errors>({})
@@ -34,8 +40,8 @@ export function BookingDialog({ open, onOpenChange, rooms }: {
   // Fresh form each time the dialog opens.
   useEffect(() => {
     if (!open) return
-    setF(blank(rooms[0]?.id ?? '')); setErr({}); setMail(null); setConf(null); setCopyMsg(''); setSubmitting(false)
-  }, [open, rooms])
+    setF(blank(rooms[0]?.id ?? '', preset)); setErr({}); setMail(null); setConf(null); setCopyMsg(''); setSubmitting(false)
+  }, [open, rooms, preset])
 
   const room = rooms.find((r) => r.id === f.roomId)
   const s = parseInt(f.start, 10)
@@ -78,6 +84,7 @@ export function BookingDialog({ open, onOpenChange, rooms }: {
     const tx = data as string
     setMail(buildMailPreview('received', { ...who, tx }))
     setConf({ tx, email: who.email, summary })
+    onBooked?.()
   }
 
   const copyTx = async () => {
