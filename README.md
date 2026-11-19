@@ -10,11 +10,17 @@ Not built yet: 06 How it works, 07 FAQ, 08 Contact, 09 Footer.
 1. **Supabase**
    1. In the dashboard, Authentication → Add user, create these with password `demo1234` (auto-confirm):
       `super@bookroom.example`, `admin1@bookroom.example`, `admin2@bookroom.example`.
-   2. SQL editor: run the files in `supabase/migrations/` in order (`001_init.sql`, `002_availability.sql`, `003_staff_workspace.sql`), then `supabase/seed.sql`
+   2. SQL editor: run the files in `supabase/migrations/` in order (`001_init.sql`, `002_availability.sql`, `003_staff_workspace.sql`, `004_mail_delivery.sql`), then `supabase/seed.sql`
       (it also assigns the demo Admins to rooms).
 2. `cp .env.example .env` and fill in your project URL and anon key (Settings → API).
-3. `npm install`
-4. `npm run dev`
+3. **Email (optional).** Deploy the edge function that emails Clients on approve/decline:
+   ```
+   supabase secrets set EMAIL_SERVER=smtp.gmail.com EMAIL_PORT=465 EMAIL_USER=<gmail address> EMAIL_PASSWORD=<gmail app password>
+   supabase functions deploy send-booking-email
+   ```
+   Use port 465: Supabase blocks outbound 587. Gmail needs an [app password](https://myaccount.google.com/apppasswords), not the account password.
+4. `npm install`
+5. `npm run dev`
 
 `npm run test` runs helper tests, `npm run build` type-checks and builds.
 
@@ -24,7 +30,7 @@ Not built yet: 06 How it works, 07 FAQ, 08 Contact, 09 Footer.
 |---|---|---|
 | 01 | `src/components/Header.tsx` | Nav links are plain anchors to sections 04 to 08. |
 | 01 | `src/components/Header.tsx` | Contact opens the inquiry dialog (08 not built). Other nav anchors wait for their sections. |
-| 02 | `src/components/workspace/` | Opened from the **Workspace** tab in the header; replaces the public sections while active. `Workspace.tsx` shell + one file per tab. Reads via RLS, writes via staff RPCs. |
+| 02 | `src/components/workspace/` | Opened from the **Workspace** tab in the header; replaces the public sections while active. `Workspace.tsx` shell + one file per tab. Reads via RLS, writes via staff RPCs. Requests tab emails the Client after approve/decline via the `send-booking-email` edge function. |
 | 03 | `src/components/Hero.tsx`, `Tracker.tsx` | **Book a Room** opens the booking dialog. Tracker calls `track_booking` and reports the result to the grid. |
 | 04 | `src/components/Rooms.tsx` | Cards for active rooms; **See availability** selects the room in the grid. |
 | 05 | `src/components/Availability.tsx` | Weekly grid from `room_slots`; open/pending slots open the dialog pre-filled. Shows the tracked booking. |
@@ -50,9 +56,12 @@ Not built yet: 06 How it works, 07 FAQ, 08 Contact, 09 Footer.
   rejects overlap with approved bookings), `decline_booking` (reason required), `staff_create_booking` (saved as
   approved), `reply_inquiry`, and Super Admin only `add_room`, `update_room`, `set_room_admin`, `list_admins`.
   Each one writes `audit_log`; approve/decline/create also write `mail_log` (the email log).
+- `send-booking-email` (edge function) reads the booking with the caller's JWT, so RLS limits it to their rooms.
+  It claims the `mail_log` row (`sent_at`) before sending, so a row is never emailed twice. SMTP credentials are
+  function secrets, never in the browser.
 
 ## Known limits
 
 - Tracker lockout (5 unknown codes → 1 minute) is client-side only.
-- No email is sent; the dialog shows what would be sent.
+- The booking dialog's "received" email is a preview; staff can send it from the email log. Approve/decline emails are sent.
 - Demo codes and demo logins are visible in the UI; remove before launch.

@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Field, inputCls, pillCls, selectCls } from '@/components/form'
 import { buildMailPreview } from '@/lib/booking'
 import { cn } from '@/lib/utils'
-import { callRpc, hhmm, whenOf, type Booking, type MailRow } from './data'
+import { callRpc, hhmm, sendBookingEmail, whenOf, type Booking, type MailRow } from './data'
 import { Badge, Chip, ghostCls, h3Cls, mutedCls, rowCls } from './ui'
 
 const STATUS_LABEL = { pending: 'Pending', approved: 'Approved', declined: 'Declined' }
@@ -34,7 +34,16 @@ export function Requests({ bookings, mail, rn, onChanged }: {
     })
     setBusy(false)
     if (err) { toast(err); return }
-    toast(`Approved ${b.tx}. The time now shows as Booked. Email queued for ${b.email}.`)
+    toast(`Approved ${b.tx}. The time now shows as Booked.`)
+    await email(b)
+  }
+
+  // Sends the latest unsent email for the booking, then reloads so the log shows the result.
+  const email = async (b: Pick<Booking, 'id' | 'email'>) => {
+    setBusy(true)
+    const err = await sendBookingEmail(b.id)
+    setBusy(false)
+    toast(err ? `Email to ${b.email} not sent: ${err}` : `Email sent to ${b.email}.`)
     onChanged()
   }
 
@@ -45,8 +54,8 @@ export function Requests({ bookings, mail, rn, onChanged }: {
     setBusy(false)
     if (err) { toast(err); return }
     setDeclining(null); setReason('')
-    toast(`Declined ${b.tx}. Email queued for ${b.email}.`)
-    onChanged()
+    toast(`Declined ${b.tx}.`)
+    await email(b)
   }
 
   const byId = new Map(bookings.map((b) => [b.id, b]))
@@ -72,7 +81,10 @@ export function Requests({ bookings, mail, rn, onChanged }: {
             <span className="font-mono font-bold tracking-wider">{b.tx}</span>
             <span className="font-semibold">{b.name} · {b.dept}</span>
             <span className="text-sm text-muted-foreground">{whenOf(b)}</span>
-            <span className="text-sm text-muted-foreground">{b.purpose}</span>
+            <span className="text-sm text-muted-foreground">
+              {b.email}{b.phone && ` · ${b.phone}`}{b.attendees != null && ` · ${b.attendees} attendees`}
+            </span>
+            {b.purpose && <span className="text-sm text-muted-foreground">{b.purpose}</span>}
           </div>
           <Chip>{rn(b.room_id)}</Chip>
           <Badge tone={b.status}>{STATUS_LABEL[b.status]}</Badge>
@@ -103,7 +115,7 @@ export function Requests({ bookings, mail, rn, onChanged }: {
 
       <h3 className={cn(h3Cls, 'mt-2')}>Email log</h3>
       <p className="text-[13px] font-medium text-muted-foreground">
-        Prototype only: these are the emails the system would send to Clients. Nothing is actually delivered.
+        Emails sent to Clients when a request is received, approved or declined. Unsent ones can be sent again.
       </p>
       {log.map((m) => {
         const b = m.booking_id ? byId.get(m.booking_id) : undefined
@@ -116,9 +128,17 @@ export function Requests({ bookings, mail, rn, onChanged }: {
           <div key={m.id} className={rowCls}>
             <div className="flex min-w-0 flex-[1_1_260px] flex-col gap-[3px]">
               <span className="font-bold">{subject}</span>
-              <span className="text-sm text-muted-foreground">To {m.to_email} · {hhmm(m.created_at)}</span>
+              <span className="text-sm text-muted-foreground">
+                To {m.to_email} · {hhmm(m.created_at)} · {m.sent_at ? `Sent ${hhmm(m.sent_at)}` : 'Not sent'}
+              </span>
+              {m.error && <span className="text-sm text-destructive">{m.error}</span>}
             </div>
             <Badge tone={tone}>{label}</Badge>
+            {!m.sent_at && b && (
+              <Button variant="outline" className={cn(pillCls, ghostCls)} disabled={busy} onClick={() => email(b)}>
+                {m.error ? 'Retry' : 'Send'}
+              </Button>
+            )}
           </div>
         )
       })}
