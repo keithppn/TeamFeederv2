@@ -1,0 +1,82 @@
+[
+  {
+    "query": "my next.js 15 landing page (app router, shadcn, on vercel) has a hero that's just a gradient and some text, kinda boring. can you add some animated 3d background behind it that uses my theme colors? needs to keep lighthouse decent",
+    "should_trigger": true
+  },
+  {
+    "query": "our laravel 11 inertia react app's login page feels flat. i want something subtle moving behind the form, like floating shapes or a slow flowing gradient, but it can't make the form harder to use. we use the MUI template btw",
+    "should_trigger": true
+  },
+  {
+    "query": "i've got robot.glb (about 4mb) with a walk cycle and i want it rotating in the right panel of my vite + react + tsx signup page. dark mode must still look ok. where do i put the file?",
+    "should_trigger": true
+  },
+  {
+    "query": "can we do one of those apple-style scrollytelling sections where the camera moves through a scene while 3 text blocks fade in as you scroll? react tsx, shadcn, tailwind v4",
+    "should_trigger": true
+  },
+  {
+    "query": "need an animated 3D headline that says 'Northwind Labs' on our vite react homepage, with a little entrance animation and a bit of mouse parallax. no idea what font file i need",
+    "should_trigger": true
+  },
+  {
+    "query": "can u add that webgl particle thing behind my hero? react + vite + shadcn, nothing crazy just ambient. also pls dont break mobile",
+    "should_trigger": true
+  },
+  {
+    "query": "i have a three.js canvas inside a react component and every time i navigate between routes i get 'too many active WebGL contexts, oldest context will be lost' in the console. how do i set this up properly so it mounts and cleans up right?",
+    "should_trigger": true
+  },
+  {
+    "query": "my team stores big glb models in supabase storage and i need to load one into a three.js scene in our vite app deployed on vercel. public bucket vs signed url? and should i compress the model first?",
+    "should_trigger": true
+  },
+  {
+    "query": "the empty state card on our MUI admin dashboard is super dull. could we put a small animated 3d banner at the top of it? it has to stay light because ops people open this on old laptops",
+    "should_trigger": true
+  },
+  {
+    "query": "i want a stripe-style animated gradient mesh behind my pricing page header, in react tsx. i think it's done with a shader? i want colors to come from my tailwind theme not hardcoded",
+    "should_trigger": true
+  },
+  {
+    "query": "my react dashboard (MUI X) has a recharts line chart that re-renders on every filter change and lags with ~20k points. how do i speed it up?",
+    "should_trigger": false
+  },
+  {
+    "query": "can you make a pure css animated gradient background for my tailwind hero? no javascript, no canvas, i want it to loop slowly and work with prefers-reduced-motion",
+    "should_trigger": false
+  },
+  {
+    "query": "we use framer-motion in our next.js app router project and page transitions flicker when the layout changes. how do i get smooth exit animations between routes?",
+    "should_trigger": false
+  },
+  {
+    "query": "how do i rig a low poly character in blender and export it with a walk cycle? it's my first time doing animation and i'm using blender 4",
+    "should_trigger": false
+  },
+  {
+    "query": "i need to drop a lottie animation (json from lottiefiles) into the hero of my react + shadcn site and make it autoplay once then stop. what's the cleanest way?",
+    "should_trigger": false
+  },
+  {
+    "query": "we have a unity webgl build for our product demo. how do i embed it in a react page and make it fill the container without scrollbars?",
+    "should_trigger": false
+  },
+  {
+    "query": "set up supabase storage for user avatar uploads in my vite react app with an RLS policy so people can only write to their own folder. shadcn form for the upload ui",
+    "should_trigger": false
+  },
+  {
+    "query": "i want to show 3d buildings on a mapbox map in my react app and let users tilt and rotate the view. which style layers do i need?",
+    "should_trigger": false
+  },
+  {
+    "query": "animate our svg logo so the paths draw themselves when the page loads. we already use gsap in the project, laravel + react",
+    "should_trigger": false
+  },
+  {
+    "query": "shadcn dark mode toggle isn't persisting after refresh in my next.js 15 app, it flashes light first. how do i fix the flash?",
+    "should_trigger": false
+  }
+]
