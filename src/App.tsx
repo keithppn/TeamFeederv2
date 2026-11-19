@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { Availability, weekOf } from '@/components/Availability'
 import { BookingDialog, type Preset } from '@/components/BookingDialog'
+import { Faq } from '@/components/Faq'
 import { Header } from '@/components/Header'
 import { Hero } from '@/components/Hero'
 import { HowItWorks } from '@/components/HowItWorks'
@@ -60,6 +61,7 @@ export default function App() {
           version={version}
         />
         <HowItWorks />
+        <Faq />
       </main>
       <BookingDialog open={dialog === 'booking'} onOpenChange={toggle('booking')} rooms={rooms}
         preset={preset} onBooked={() => setVersion((v) => v + 1)} />

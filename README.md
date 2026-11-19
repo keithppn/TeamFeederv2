@@ -2,8 +2,8 @@
 
 React + Vite + TypeScript + shadcn/ui + Supabase. Design follows the original single-file prototype.
 
-Built sections (from the section specs): **01 Header**, **03 Hero & tracker**, **10 Booking dialog**, **11 Inquiry dialog**, **12 Staff sign-in**, **04 Rooms**, **05 Availability grid**, **06 How it works**.
-Not built yet: 02 Staff workspace, 07 FAQ, 08 Contact, 09 Footer.
+Built sections (from the section specs): **01 Header**, **03 Hero & tracker**, **10 Booking dialog**, **11 Inquiry dialog**, **12 Staff sign-in**, **04 Rooms**, **05 Availability grid**, **06 How it works**, **07 FAQ**.
+Not built yet: 02 Staff workspace, 08 Contact, 09 Footer.
 
 ## Setup
 
@@ -26,6 +26,7 @@ Not built yet: 02 Staff workspace, 07 FAQ, 08 Contact, 09 Footer.
 | 04 | `src/components/Rooms.tsx` | Cards for active rooms; **See availability** selects the room in the grid. |
 | 05 | `src/components/Availability.tsx` | Weekly grid from `room_slots`; open/pending slots open the dialog pre-filled. Shows the tracked booking. |
 | 06 | `src/components/HowItWorks.tsx` | Static three-step explainer. Keep wording in line with 03 and 10. |
+| 07 | `src/components/Faq.tsx` | Static accordion on native `<details>`. Answers describe rules in 03, 05, 10, 11; update together. |
 | 10 | `src/components/BookingDialog.tsx` | Calls `create_booking`; shows phone, purpose, attendees too. Email is a preview only. |
 | 11 | `src/components/InquiryDialog.tsx` | Inserts into `inquiries`. |
 | 12 | `src/components/SignInDialog.tsx`, `src/hooks/useAuth.ts` | Supabase Auth; only users with a `profiles` row can sign in. |
